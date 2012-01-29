@@ -6,8 +6,13 @@
     <title>Multiplayer Chess</title>
     <link rel='stylesheet' href='style.css' />
     <script src="mpc.js" type="text/javascript" charset="utf-8"></script>
+    <script>
+      mpc.require('./config').WORKING_DIR = '/sites/multiplayerchess.com/webapp/site';
+      mpc.require('./config').SERVICE_URL = '/mpc';
+      mpc.main();
+    </script>
     <!--
-      <script type="text/javascript" src="https://getfirebug.com/firebug-lite.js#overrideConsole=true"></script>
+      <script type="text/javascript" src="https://getfirebug.com/firebug-lite.js#overrideConsole=true,startOpened=true"></script>
     -->
     <!--[if IE]>
     <script type="text/javascript" src="excanvas.js"></script>

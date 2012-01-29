@@ -1,9 +1,0 @@
-{
-  "name":"mpc-deps",
-  "build":{
-    "dir":"../deps",
-    "files":[
-      "*.js"
-    ]
-  }
-}

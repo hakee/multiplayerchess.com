@@ -67,7 +67,7 @@ Gameplay.prototype.createSession = function(options){
   this.abortStream();
   this.session.players = [];
 
-  queryService('POST', 'session/new', options, function(error,response){
+  queryService({ method:'POST', path:'session/new', params:options, timeout:3000 }, function(error,response){
     if(error){
       this.state = stateCodes.UNINITIALIZED;
       return this.events.publish('error',new Error('Unsuccessful connection attempt. Server Response:"'+error.message+'"'));
@@ -115,7 +115,7 @@ Gameplay.prototype.join = function(sessionId,nickname,callback){
       isExistentPlayer = sessions && sessions.hasOwnProperty(sessionId),
       options = isExistentPlayer ? { 'spId':sessions[sessionId] } : { 'nickname':nickname };
 
-  queryService('POST', 'session/'+sessionId+'/join', options, function(error,response){
+  queryService({ method:'POST', path:'session/'+sessionId+'/join', params:options, timeout:3000 }, function(error,response){
     if(error){
       this.state = stateCodes.UNINITIALIZED;
       return this.events.publish('error',new Error('Unsuccessful connection attempt. Server Response:"'+error.message+'"'));
@@ -147,7 +147,7 @@ Gameplay.prototype.listenForMove = function(){
       return;
     }
     var tryAgain = arguments.callee.bind(this);
-    this._stream_ = queryService('POST', 'session/'+id+'/listen/update',body,function(error, response){
+    this._stream_ = queryService({ method:'POST', path:'session/'+id+'/listen/update', params:body },function(error, response){
       this._stream_ = undefined;
       if(error){
         this.events.publish('error', error);
@@ -171,7 +171,7 @@ Gameplay.prototype.listenForOpponent = function(){
 
   (function(){
     var tryAgain = arguments.callee.bind(this);
-    this._stream_ = queryService('POST', 'session/'+sessionId+'/listen/opponent', { 'spId':playerId },function(error, response){
+    this._stream_ = queryService({ method:'POST', path:'session/'+sessionId+'/listen/opponent', params:{ 'spId':playerId }},function(error, response){
       this._stream_ = null;
       if(error){
         this.state = stateCodes.UNINITIALIZED;
@@ -190,7 +190,7 @@ Gameplay.prototype.makeMove = function(move){
   var player = this.getSelf(),
       sessionId = this.session.id;
   if( player && sessionId ){
-    queryService('POST','session/'+sessionId+'/move',{ 'from':move.from, 'to':move.to, 'promotion':move.promotion, 'spId':player.id },function(error, response){
+    queryService({ method:'POST', path:'session/'+sessionId+'/move', params:{ 'from':move.from, 'to':move.to, 'promotion':move.promotion, 'spId':player.id } },function(error, response){
       if(response.ok){
         this.session.importServiceResponse(response);
       } else {
@@ -259,7 +259,7 @@ Gameplay.prototype.resign = function(){
   var player = this.getSelf(),
       sessionId = this.session.id;
   if( player && sessionId ){
-    queryService('POST','session/'+sessionId+'/resign',{ 'spId':player.id },function(error, response){
+    queryService({ method:'POST', path:'session/'+sessionId+'/resign', params:{ 'spId':player.id } },function(error, response){
       if(response.ok){
         this.session.importServiceResponse(response);
       } else {
@@ -315,7 +315,7 @@ Gameplay.prototype.start = function(nickname){
     }
   }
 
-  queryService('POST', 'session/start', { 'nickname':nickname, 'ignoreList':ignoreList }, function(error,response){
+  queryService({ method:'POST', path:'session/start', params:{ 'nickname':nickname, 'ignoreList':ignoreList } }, function(error,response){
     if(error){
       return this.events.publish('error',new Error('Could not connect to the server'));
     }
@@ -341,7 +341,7 @@ Gameplay.prototype.updatePlayerCount = function(){
       options = player && { 'spId':player.id } || null,
       next = arguments.callee.bind(this);
 
-  queryService(method, 'players/online', options,function(error, result){
+  queryService({ method:method, path:'players/online', params:options, timeout:5000 },function(error, result){
     if(error){
       this.events.publish('disconnect');
       throw error;

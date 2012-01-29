@@ -16,8 +16,13 @@ def read(el):
 
 def bundle():
   return '''
-var cache = require('./ui').TEMPLATE_CACHE;
+(function(){
+
+var cache = mpc.require('./ui').TEMPLATE_CACHE;
+
 %s
+
+})();
   '''%reduce(lambda a,b: '%s\n%s'%(a,b), map(lambda filename: wrap(read(filename),filename), files))
 
 if __name__ == '__main__':

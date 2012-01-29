@@ -1,0 +1,26 @@
+{
+  "name":"mpc",
+  "version":"1.0.0",
+  "main":"./lib/setup",
+  "directories":{
+    "lib":"./lib",
+    "templates":"./templates"
+  },
+  "dependencies":{
+    "mustache":"0.x",
+    "functools":"1.x",
+    "relative-date":"1.x",
+    "observer":"1.x",
+    "environ":"1.x",
+    "chess":"0.x",
+    "util":"0.x",
+    "dom":"0.x",
+    "css":"0.x",
+    "cookie":"0.x",
+    "es5patch":"0.x",
+    "operate_async":"0.x",
+    "xhr":"0.x",
+    "router":"0.x",
+    "toledo-chess":"0.x"
+  }
+}

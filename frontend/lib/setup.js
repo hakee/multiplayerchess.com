@@ -3,7 +3,7 @@ require('es5patch');
 var EventBroker = require('observer').EventBroker,
     Gameplay    = require('./gameplay').Gameplay,
     on          = require('dom').on,
-    config      = require('config');
+    config      = require('./config');
 
 var setup = mpc.setup = module.exports = function setup(){
   var ui        = require('./ui'),
@@ -42,7 +42,7 @@ events.create('success');
 setup.on = events.subscribe.bind(module.exports.events);
 
 var gameplay = setup.gameplay = new Gameplay;
-var dialogbox = setup.dialogbox = require('widgets/dialogbox');
+var dialogbox = setup.dialogbox = require('./widgets/dialogbox');
 
 var render = exports.render = function render(callback){
   var container = require('./widgets/container');

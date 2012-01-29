@@ -5,7 +5,7 @@ var gameplay = require('./setup').gameplay,
     ui = require('./ui'),
     singleplayer = require('./singleplayer'),
     getSessions = require('./history').getSessions,
-    replay = require('replay'),
+    replay = require('./replay'),
     dialogs;
 
 function createPrivateSession(){

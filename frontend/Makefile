@@ -19,7 +19,8 @@ warn:
 	grep "document.title" * -rn --color
 
 js:
-	jsbuild manifest.json
+	~/.node_modules/one/bin/onejs build package.json site/mpc.js
+	cat templates/bundle.js >> site/mpc.js
 
 deploy:
 	cp -rf site/* ~/www/multiplayerchess.com/public/test/.

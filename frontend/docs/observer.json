@@ -1,9 +1,0 @@
-{
-  "name":"observer",
-  "build":{
-    "dir":"../deps/observer/lib",
-    "files":[
-      "observer.js"
-    ]
-  }
-}

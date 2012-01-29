@@ -1,9 +1,0 @@
-{
-  "name":"mpc-wallpapers",
-  "build":{
-    "dir":"../wallpapers",
-    "files":[
-      "wallpapers.js"
-    ]
-  }
-}

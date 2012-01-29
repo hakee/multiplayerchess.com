@@ -8,8 +8,8 @@ var dialogbox = require('./widgets/dialogbox'),
     operateAsync = require('operate_async').operateAsync,
     gameplay = require('./setup').gameplay,
     history = require('./history'),
-    wallpapers = require('wallpapers'),
-    wallpaper = require('widgets/wallpaper'),
+    wallpapers = require('./wallpapers'),
+    wallpaper = require('./widgets/wallpaper'),
     chrome = require('environ').chrome();
 
 var HOURGLASS = '<img src="hourglass.png" width="100" height="130" />';
@@ -297,7 +297,7 @@ function showJoinMsg(){
   };
 
   if(self){
-    options.buttons.push({ 'caption':'Ad gloriam!', 'click':dialogbox.close });
+    options.buttons.push({ 'caption':'For Victory!', 'click':dialogbox.close });
     options.message += ''
                     + 'the <strong>'
                     + (self.white ?'White':'Black')
@@ -319,7 +319,7 @@ function showNewSessionDialog(){
 function showNewPrivateSessionMsg(){
   dialogbox.open({
     'symbol'  : ui.getRandomSymbol(),
-    'buttons' : [{ 'caption':'Ad gloriam!', 'click':dialogbox.close }],
+    'buttons' : [{ 'caption':'For Victory!', 'click':dialogbox.close }],
     'message' : '' 
               + 'You\'ve created a new private session and joined it as the <strong>'
               + (gameplay.getSelf().white ?'White':'Black')
@@ -457,7 +457,7 @@ function showOpponentJoinMsg(){
              + (gameplay.getOpponent().white ? 'White' : 'Black')
              + ' player.',
     'symbol':ui.getRandomSymbol(),
-    'buttons':[{ 'caption':'Ad gloriam!', 'click':dialogbox.close }] 
+    'buttons':[{ 'caption':'For Victory!', 'click':dialogbox.close }] 
   })
 }
 

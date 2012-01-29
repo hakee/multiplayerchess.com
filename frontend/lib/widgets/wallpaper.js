@@ -1,9 +1,9 @@
 var ui = require('../ui'),
     sidebar = require('./sidebar'),
     container = require('./container'),
-    wallpapers = require('wallpapers'),
+    wallpapers = require('../wallpapers'),
     css = require('css'),
-    gameplay = require('setup').gameplay;
+    gameplay = require('../setup').gameplay;
 
 var bgImage = undefined;
 

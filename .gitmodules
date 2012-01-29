@@ -22,3 +22,6 @@
 [submodule "frontend/deps/toledo-chess"]
 	path = frontend/deps/toledo-chess
 	url = git@github.com:azer/toledo-chess.git
+[submodule "frontend/node_modules/jhlywa-chess"]
+	path = frontend/node_modules/jhlywa-chess
+	url = https://github.com/jhlywa/chess.js.git
