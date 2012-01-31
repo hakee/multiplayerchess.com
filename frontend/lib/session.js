@@ -65,7 +65,7 @@ Session.prototype.importServiceResponse = function(response){
       end = !this.end && doc.end,
       start;
 
-  this.createTS = doc.create_ts;
+  this.createTS = doc.create_ts * 1000;
   this.end = doc.end;
   this.id = doc._id;
   this.rev = doc._rev;
@@ -83,7 +83,7 @@ Session.prototype.importServiceResponse = function(response){
   var i, len, log, lastMoveLog;
   for(i = -1, len=doc.logs.length; ++i < len; ){
     log = doc.logs[i];
-    log.relativeDate = relativeDate.bind(undefined,log.ts,getServerTime());
+    log.relativeDate = relativeDate.bind(undefined,log.ts*1000,getServerTime());
 
     if(log.code==3){
       lastMoveLog = this.moves[this.moves.length-1];

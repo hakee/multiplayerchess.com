@@ -116,10 +116,26 @@ function updateClass(){
                       + ( replay.paused() ? ' replay-paused' : '');
 }
 
-function resize(){
-  var layout = module.exports.layout = getLayout();
-  events.publish('resize',layout);
-}
+var resize = (function(undefined){
+
+  var timeout;
+
+  return function resize(){
+    var layout = module.exports.layout = getLayout();
+
+    if(timeout != undefined){
+      clearTimeout(timeout);
+      timeout = undefined;
+    }
+
+    timeout = setTimeout(function(){
+      timeout = undefined;
+      events.publish('resize',layout);
+    }, 250);
+
+  };
+
+})();
 
 function setup(){
   select = module.exports.select = ui.queryFragment.bind(null,ui.select('#container'))

@@ -1,21 +1,28 @@
-var dialogbox = require('./widgets/dialogbox'),
-    stateCodes = require('./gameplay').stateCodes,
-    ui = require('./ui'),
-    config = require('./config'),
-    container = require('./widgets/container'),
-    navigator = require('./navigator'),
-    on = require('dom').on,
+var on           = require('dom').on,
+    chrome       = require('environ').chrome(),
     operateAsync = require('operate_async').operateAsync,
-    gameplay = require('./setup').gameplay,
-    history = require('./history'),
-    wallpapers = require('./wallpapers'),
-    wallpaper = require('./widgets/wallpaper'),
-    chrome = require('environ').chrome();
+
+    gameplay     = require('./setup').gameplay,
+    ui           = require('./ui'),
+    config       = require('./config'),
+    navigator    = require('./navigator'),
+    history      = require('./history'),
+    share        = require('./share'),
+
+    stateCodes   = require('./gameplay').stateCodes,
+
+    dialogbox    = require('./widgets/dialogbox'),
+    container    = require('./widgets/container'),
+
+    wallpapers   = require('./wallpapers'),
+    wallpaper    = require('./widgets/wallpaper');
 
 var HOURGLASS = '<img src="hourglass.png" width="100" height="130" />';
 
+var forVictoryButton = { 'caption':'Start!', 'title':'Dismiss this dialog!', 'click':dialogbox.close, 'class':'victory' };
+
 function alphanumeric(keyCode,shiftKey){
-  return  ( keyCode >= 97 && keyCode <= 122 ) // a-z 
+  return  ( keyCode >= 97 && keyCode <= 122 ) // a-z
           || ( keyCode >= 65 && keyCode <= 90 ) // A-Z
           || ( !shiftKey && keyCode >= 48 && keyCode <= 57 ) // 0-9
           || ( keyCode >= 37 && keyCode <= 40 ); // 0-9
@@ -31,7 +38,7 @@ function control(keyCode){
 var nickname = (function(){
 
   var nickname = history.getNickname() || 'Anonymous', el, testEl;
-  
+
   function check(eventArgs){
     if(( !alphanumeric(eventArgs.keyCode, eventArgs.shiftKey) || el.value.length>=20 ) && !control(eventArgs.keyCode)){
       if(eventArgs.preventDefault){
@@ -76,8 +83,8 @@ var nickname = (function(){
       dialogbox.open({ 'buttons':[{ 'click':close, 'caption':'OK' }], 'symbol':ui.getRandomSymbol(), 'class':'prompt nickname', 'message':html },function(){
         testEl = undefined;
         el = dialogbox.select('#nickname');
-        on(el, 'keydown', check); 
-        on(el, 'keyup', check); 
+        on(el, 'keydown', check);
+        on(el, 'keyup', check);
       });
     });
 
@@ -90,11 +97,11 @@ var nickname = (function(){
   function setup(nnEl,nnTestbox){
       el = nnEl;
       testEl = nnTestbox;
-    
+
       check({ 'keyCode':97 });
 
-      on(el, 'keydown', check); 
-      on(el, 'keyup', check); 
+      on(el, 'keydown', check);
+      on(el, 'keyup', check);
 
       el.value = el.value;
 
@@ -126,10 +133,10 @@ function confirm(msg,callback){
     'buttons':[
       {
         'caption':'No',
-        'click':navigator.reset
+        'click':navigator.resetDialogs
       },
-      { 
-        'caption':'Yes', 
+      {
+        'caption':'Yes',
         'click':function(){
           dialogbox.close();
           callback();
@@ -167,11 +174,11 @@ function photographers(args){
     }
 
     dialogbox.open({ 'buttons':buttons, 'class':'public intro photographers', 'symbol':symbol, 'message':html });
-  }); 
+  });
 }
 
 function prompt(options, callback){
-  
+
   function submit(){
     callback(null, dialogbox.select('.textbox').value);
   }
@@ -182,13 +189,13 @@ function prompt(options, callback){
     }
 
     var html = ui.render(template, options);
-    
+
     dialogbox.open({ 'class':'prompt', 'symbol':'?', 'message':html, 'buttons':[{ 'caption':options.buttonCaption || 'OK', 'click':submit }] },function(){
       dialogbox.select('.textbox').addEventListener('keyup', function(eventArgs){
         eventArgs.keyCode == 13 && submit();
       }, false);
     });
-    
+
   });
 }
 
@@ -231,7 +238,7 @@ function showAboutDialog(){
 }
 
 function showConnectionMsg(){
-  dialogbox.open({ 'symbol':HOURGLASS, 'message':'Connecting to the server...' }); 
+  dialogbox.open({ 'symbol':HOURGLASS, 'message':'Connecting to the server...' });
 }
 
 function showErrorMsg(excinfo){
@@ -263,9 +270,6 @@ function showIntroDialog(){
     { 'link':'#!/faq', 'caption':'FAQ' }
   ];
 
-  if(chrome){
-  }
-
   ui.getTemplate('news.html', function(newsError, news){
     if(newsError) throw newsError;
 
@@ -290,18 +294,18 @@ function showJoinMsg(){
   var options = {
     'symbol'  : ui.getRandomSymbol(),
     'buttons' : [],
-    'message' : '' 
+    'message' : ''
               + 'You\'ve joined to'
               + ( gameplay.session.isPrivate ? ' a <strong>private</strong> ' : ' this ' )
               + 'game as '
   };
 
   if(self){
-    options.buttons.push({ 'caption':'For Victory!', 'click':dialogbox.close });
+    options.buttons.push(forVictoryButton);
     options.message += ''
                     + 'the <strong>'
                     + (self.white ?'White':'Black')
-                    + '</strong> player.'
+                    + '</strong> player.';
   } else {
     options.buttons.push({ 'caption':'Ok', 'click':dialogbox.close },
                  { 'caption':'Main Menu', 'click':navigator.navigate.bind(undefined,'') });
@@ -317,19 +321,19 @@ function showNewSessionDialog(){
 }
 
 function showNewPrivateSessionMsg(){
+
+  var url = config.APPLICATION_URL + '/#!/' + gameplay.session.id;
+
   dialogbox.open({
     'symbol'  : ui.getRandomSymbol(),
-    'buttons' : [{ 'caption':'For Victory!', 'click':dialogbox.close }],
-    'message' : '' 
+    'buttons' : socialButtons(url, forVictoryButton),
+    'message' : ''
               + 'You\'ve created a new private session and joined it as the <strong>'
               + (gameplay.getSelf().white ?'White':'Black')
               + '</strong> player. '
               + '<p>Share the URL below with somebody to play against:</p>'
               + '<input class="urlbox" value="'
-              +config.APPLICATION_URL
-              +
-              '/#!/'
-              +gameplay.session.id
+              + url
               +'" />'
   });
 }
@@ -339,10 +343,10 @@ function showPGN(){
     if(error) throw error;
     var html = ui.render(template,{ 'pgn':gameplay.pgn().replace(/\n/g,'<br />') });
 
-    dialogbox.open({ 
+    dialogbox.open({
       'symbol':ui.getRandomSymbol(),
-      'buttons':[{ 'caption':'Close', 'click':navigator.reset }], 
-      'message':html 
+      'buttons':[{ 'caption':'Close', 'click':navigator.resetDialogs }],
+      'message':html
     });
   });
 }
@@ -357,8 +361,8 @@ function showSessionOverview(){
       black = gameplay.black(),
       result = gameplay.result();
 
-  var windowContent = { 
-    'fen':gameplay.context.fen, 
+  var windowContent = {
+    'fen':gameplay.context.fen,
     'pgn':gameplay.pgn().replace(/\n/g,'<br />'),
     'white':white && white.nickname,
     'black':black && black.nickname || '?',
@@ -384,24 +388,24 @@ function showSessionOverview(){
   var buttons = [];
 
   if(!result){
-    buttons.push({ 'caption':'Close', 'click':navigator.reset });
+    buttons.push({ 'caption':'Close', 'click':navigator.resetDialogs });
   } else {
-    buttons.push({ 
-      'caption':'Return To Main Menu', 
-      'click':navigator.navigate.bind(undefined,'') 
+    buttons.push({
+      'caption':'Return To Main Menu',
+      'click':navigator.navigate.bind(undefined,'')
     });
-    buttons.push({ 
-      'caption':'Replay', 
+    buttons.push({
+      'caption':'Replay',
       'link':'#!/'+gameplay.session.id+'/replay'
     });
-    buttons.push({ 
-      'caption':'Close', 
+    buttons.push({
+      'caption':'Close',
       'click':navigator.reset
     });
   }
 
   ui.getTemplate('session_overview.html', function(error, template){
-    if(error){ 
+    if(error){
       throw error;
     }
 
@@ -410,9 +414,9 @@ function showSessionOverview(){
         throw error;
       }
 
-      dialogbox.open({ 
+      dialogbox.open({
         'symbol':ui.getRandomSymbol(),
-        'buttons':buttons, 
+        'buttons':buttons,
         'message':ui.render(template, windowContent, partials)
       });
 
@@ -422,19 +426,18 @@ function showSessionOverview(){
 }
 
 function showOpponentWaitDialog(){
+  var url = config.APPLICATION_URL + '/#!/' + gameplay.session.id;
+
   var options = {
     'symbol'  : HOURGLASS,
+    'buttons' : socialButtons(url),
     'message'     : ''
-              + 'You\'ve joined this session'
-              + 'as the <strong>'
+              + 'You\'ve joined this session as the <strong>'
               + (gameplay.getSelf().white ?'White':'Black')
               + '</strong> player.'
               + '<p>Please wait until an online player connects. If it takes too long, you may share URL of this session with someone you want to play with.</p>'
               + '<input class="urlbox" value="'
-              +config.APPLICATION_URL
-              +
-              '/#!/'
-              +gameplay.session.id
+              + url
               +'" />'
   };
 
@@ -444,21 +447,35 @@ function showOpponentWaitDialog(){
 var showStartDialog = (function(){
   var shownSessions = {};
   return function(){
-    if(!shownSessions[gameplay.session.id]){
+    if(!shownSessions[gameplay.session.id] || !gameplay.session.isPrivate){
       shownSessions[gameplay.session.id] = true;
       gameplay.state == stateCodes.WAITING_OPPONENT ? showNewSessionDialog() : showJoinMsg();
     }
-  }
+  };
 })();
 
 function showOpponentJoinMsg(){
-  dialogbox.open({ 
+  dialogbox.open({
     'message': 'The opponent has connected as '
              + (gameplay.getOpponent().white ? 'White' : 'Black')
              + ' player.',
     'symbol':ui.getRandomSymbol(),
-    'buttons':[{ 'caption':'For Victory!', 'click':dialogbox.close }] 
+    'buttons':[forVictoryButton]
   })
+}
+
+function showShareDialog(){
+  var url = config.APPLICATION_URL+'/#!/'+gameplay.session.id;
+
+  dialogbox.open({
+    'symbol':ui.getRandomSymbol(),
+    'message':'You can use the URL below to continue this session later and/or to invite someone to play against each other.'
+      + '<input class="urlbox" value="'+url+'" />',
+    'buttons':socialButtons(url, {
+      'caption':'Close',
+      'click':navigator.resetDialogs
+    })
+  });
 }
 
 function setup(gpInstance){
@@ -466,6 +483,38 @@ function setup(gpInstance){
   gameplay.session.on('join',showStartDialog);
   gameplay.session.on('opponentJoin',showOpponentJoinMsg);
   gameplay.on('error', showErrorMsg);
+}
+
+function socialButtons(url/*, additional buttons */){
+  var set = [
+    {
+      'caption':'@',
+      'title':'Share with E-Mail',
+      'class':'social email',
+      'click':share.sendEmail(url)
+    },
+    {
+      'caption':'F',
+      'title':'Share to Facebook',
+      'class':'social facebook',
+      click:share.toFacebook(url)
+    },
+    {
+      'caption':'t',
+      'title':'Share to Twitter',
+      'class':'social twitter',
+      'click':share.toTwitter(url)
+    }
+  ];
+
+  var i = 0,
+      len = arguments.length;
+
+  while(++i<len){
+    set.push(arguments[i]);
+  }
+
+  return set;
 }
 
 module.exports = {
@@ -482,7 +531,8 @@ module.exports = {
   'showErrorMsg':showErrorMsg,
   'showIntroDialog':showIntroDialog,
   'showPGN':showPGN,
+  'showShareDialog': showShareDialog,
   'showSessionOverview':showSessionOverview,
   'showStartDialog':showStartDialog,
   'showOpponentJoinMsg':showOpponentJoinMsg
-}
+};

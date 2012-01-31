@@ -7,6 +7,6 @@ exports.WALLPAPER_CT = 9;
 exports.colors = {
   'light':'rgba(255,206,158,0.9)',
   'dark':'rgba(209,139,71,0.9)',
-  'sidebar':'rgba(0,0,0,0.45)',
+  'sidebar':'rgba(0,0,0,0.35)',
   'caption':'rgba(255,255,255,0.5)'
 };

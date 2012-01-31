@@ -66,6 +66,7 @@ function resetDialogs(){
 
   if(gameplay.session.id && gameplay.state == 2){
     dialogs.showStartDialog();
+    navigate(gameplay.session.id);
   } else if(gameplay.session.id && gameplay.state == 3){
     navigate(gameplay.session.id); 
   } else if(gameplay.session.id && gameplay.state == 4){
@@ -109,7 +110,9 @@ function sessionSubNavWrapper(fn){
     }
 
     joinSession(sessionId, function(){
-      navigate(url);
+      setTimeout(function(){
+        navigate(url);
+      }, 100);
     });
   }
 }
@@ -149,15 +152,7 @@ function setup(){
 
 function share(){
   if(gameplay.session.id){
-    dialogbox.open({
-      'symbol':ui.getRandomSymbol(),
-      'message':'You can use the URL below to continue this session later and/or to invite someone to play against each other.'
-               + '<input class="urlbox" value="'+config.APPLICATION_URL+'/#!/'+gameplay.session.id+'" />',
-      'buttons':[{
-        'caption':'Close',
-        'click':resetDialogs
-      }]
-    });
+    dialogs.showShareDialog();
   }
 }
 
@@ -180,6 +175,6 @@ module.exports = {
   'resetDialogs':resetDialogs,
   'search':search,
   'setup':setup,
-  'share':setup,
+  'share':share,
   'updateSessionParam':updateSessionParam
 }
