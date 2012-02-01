@@ -1,0 +1,7 @@
+html, body { padding:0; margin:0; width:100%; height:100%; background:#000; overflow:hidden; }
+#intro-wrapper { position:absolute; background:#000; top:0; left:0; width:100%; height:100%; z-index:999999; text-align:center; padding:0; margin:0; }
+#intro {  margin:50px 0 0 0; font:25em sans-serif; color:#fff; width:300px; height:300px; display:none; }
+
+#intro-message-wrapper { font:1.3em sans-serif;  position:absolute; bottom:0; left:0; width:100%; opacity:0.5; padding: 5px 0px; color:#fff; text-align:center; display:none; }
+#intro-message-wrapper.error { background:#aa0000; }
+#intro-message { padding:20px 10px; }
