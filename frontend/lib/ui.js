@@ -1,7 +1,19 @@
-var mustache =  require('mustache'),
-    config = require('./config');
+var mustache    = require('mustache'),
+    environ     = require('environ'),
+    css         = require('css'),
+    addClass    = css.addClass,
+    removeClass = css.removeClass,
+    config      = require('./config');
 
 var fileCaptions = ['a','b','c','d','e','f','g','h'];
+
+function enableMobileView(){
+  addClass(document.getElementById('mpc'), 'mobile');
+}
+
+function disableMobileView(){
+  removeClass(document.getElementById('mpc'), 'mobile');
+}
 
 function getRandomSymbol(){
   return "&#98"+Math.round(17+Math.random()*5)+";";
@@ -78,20 +90,28 @@ function scaleSize(x1,y1,x2,y2){
 }
 
 function setup(){
+//  if(environ.mobile()){
+    enableMobileView();
+//  }
+
   module.exports.select = queryFragment.bind(null, document.getElementById('mpc'));
 }
+
+
 var readFile = (function(){
   try {
     return require('fs').readFile;
   } catch(exc) {
     return function(url, callback){ 
       return require('xhr').get(url,null,callback);
-    }
+    };
   }
 })();
 
 module.exports = {
   'TEMPLATE_CACHE':{},
+  'enableMobileView': enableMobileView,
+  'disableMobileView': disableMobileView,
   'fileCaptions':fileCaptions,
   'getRandomSymbol':getRandomSymbol,
   'getTemplate':getTemplate,

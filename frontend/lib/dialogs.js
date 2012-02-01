@@ -17,7 +17,7 @@ var on           = require('dom').on,
     wallpapers   = require('./wallpapers'),
     wallpaper    = require('./widgets/wallpaper');
 
-var HOURGLASS = '<img src="hourglass.png" width="100" height="130" />';
+var HOURGLASS = '<img src="'+config.WORKING_DIR+'/hourglass.png" width="100" height="130" />';
 
 var forVictoryButton = { 'caption':'Start!', 'title':'Dismiss this dialog!', 'click':dialogbox.close, 'class':'victory' };
 
@@ -266,6 +266,7 @@ function showIntroDialog(){
   var buttons = [
     { 'target':'_blank', 'link':'http://facebook.com/multiplayerchess', 'caption':'Facebook', 'class':'social' },
     { 'target':'_blank', 'link':'https://chrome.google.com/webstore/detail/ckjffnjacjdmdmpemmnplcgngbdgfmpc', 'caption':'Chrome WebStore', 'class':'social chrome' },
+    { 'click':ui.disableMobileView, 'caption': 'Back to Regular View', 'class':'mobile-only mobile-only-inline' },
     { 'link':'#!/about', 'caption':'About' },
     { 'link':'#!/faq', 'caption':'FAQ' }
   ];
@@ -391,7 +392,7 @@ function showSessionOverview(){
     buttons.push({ 'caption':'Close', 'click':navigator.resetDialogs });
   } else {
     buttons.push({
-      'caption':'Return To Main Menu',
+      'caption':'&larr; Main Menu',
       'click':navigator.navigate.bind(undefined,'')
     });
     buttons.push({

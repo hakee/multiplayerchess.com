@@ -1,20 +1,21 @@
 require('es5patch');
 
 var EventBroker = require('observer').EventBroker,
-    Gameplay    = require('./gameplay').Gameplay,
     on          = require('dom').on,
+    Gameplay    = require('./gameplay').Gameplay,
     config      = require('./config');
 
 var setup = mpc.setup = module.exports = function setup(){
+
   var ui        = require('./ui'),
       navigator = require('./navigator'),
       container = require('./widgets/container'),
       dialogs   = require('./dialogs'),
       history   = require('./history'),
       titlebar  = require('./widgets/titlebar'),
-      replay    = require('./replay');
+      replay    = require('./replay'),
 
-      toSetup = [container,dialogbox,dialogs,history,titlebar,replay,navigator];
+      toSetup   = [container,dialogbox,dialogs,history,titlebar,replay,navigator];
 
   render(function(error, html){
     if(error){
